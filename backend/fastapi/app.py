@@ -128,3 +128,28 @@ def get_history(channel: str):
 
     return matched[["date", "daily_views", "daily_likes"]].to_dict(orient="records")
 
+@app.get("/search-channels")
+def search_channels(q: str):
+    q = q.strip().lower()
+    if not q:
+        return []
+
+    # use helper -> BASE + relative path
+    df = read_parquet("analytics/top_channels")
+
+    if "channel_title" not in df.columns:
+        raise HTTPException(500, "channel_title column missing in top_channels parquet")
+
+    df["ch_lower"] = df["channel_title"].str.strip().str.lower()
+
+    # simple contains match
+    matches = df[df["ch_lower"].str.contains(q)]
+
+    # only send back what frontend actually needs
+    return (
+        matches[["channel_title"]]
+        .drop_duplicates()
+        .head(20)
+        .to_dict(orient="records")
+    )
+
