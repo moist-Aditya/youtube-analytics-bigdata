@@ -134,22 +134,17 @@ def search_channels(q: str):
     if not q:
         return []
 
-    # use helper -> BASE + relative path
-    df = read_parquet("analytics/top_channels")
+    df = read_parquet("analytics/daily_views")
 
     if "channel_title" not in df.columns:
-        raise HTTPException(500, "channel_title column missing in top_channels parquet")
+        raise HTTPException(500, "channel_title missing in daily_views parquet")
 
-    df["ch_lower"] = df["channel_title"].str.strip().str.lower()
+    df["ch_lower"] = df["channel_title"].str.lower()
 
-    # simple contains match
-    matches = df[df["ch_lower"].str.contains(q)]
+    # Remove duplicates, then filter
+    unique_df = df.drop_duplicates(subset=["channel_title"])
 
-    # only send back what frontend actually needs
-    return (
-        matches[["channel_title"]]
-        .drop_duplicates()
-        .head(20)
-        .to_dict(orient="records")
-    )
+    matches = unique_df[unique_df["ch_lower"].str.contains(q)]
+
+    return matches[["channel_title"]].head(20).to_dict(orient="records")
 

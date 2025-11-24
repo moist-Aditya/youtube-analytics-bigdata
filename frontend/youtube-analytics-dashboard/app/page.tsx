@@ -16,6 +16,7 @@ import {
     Cell,
 } from "recharts";
 import SearchModal from "./components/SearchModal";
+import { Search } from "lucide-react";
 
 export default function Home() {
     const [topChannels, setTopChannels] = useState([]);
@@ -59,9 +60,9 @@ export default function Home() {
             {/* Search Icon */}
             <button
                 onClick={() => setSearchOpen(true)}
-                className="absolute top-6 right-6 bg-red-600 hover:bg-red-700 p-3 rounded-full shadow-lg"
+                className="fixed top-6 right-6 z-9999 bg-red-600 hover:bg-red-700 p-3 rounded-full shadow-lg transition-all duration-200 cursor-pointer"
             >
-                🔍
+                <Search width={22} height={22} />
             </button>
 
             <div

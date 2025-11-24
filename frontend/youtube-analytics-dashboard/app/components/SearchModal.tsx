@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { Search, X } from "lucide-react";
 
 interface Props {
     open: boolean;
@@ -45,24 +46,38 @@ export default function SearchModal({ open, onClose }: Props) {
     if (!open) return null;
 
     return (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-start justify-center pt-32 z-50">
-            <div className="bg-[#1c1c1c] rounded-xl shadow-xl border border-red-900/40 w-[90%] max-w-xl p-6 relative">
+        <div className="fixed inset-0 z-50 flex items-start justify-center pt-32 bg-black/70 backdrop-blur-md animate-fadeIn">
+            <div className="relative w-[90%] max-w-xl bg-[#1c1c1c] rounded-2xl shadow-2xl border border-red-900/40 p-8">
+                {/* Close Button */}
                 <button
                     onClick={onClose}
-                    className="absolute top-4 right-4 text-gray-400 hover:text-white"
+                    className="absolute top-4 right-4 p-2 rounded-full hover:bg-white/10 transition"
                 >
-                    ✕
+                    <X className="w-6 h-6 text-gray-300 hover:text-white" />
                 </button>
 
-                <input
-                    autoFocus
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    placeholder="Search for a YouTube channel..."
-                    className="w-full bg-[#111] border border-red-800/40 p-3 rounded-lg text-white focus:outline-none focus:border-red-500"
-                />
+                {/* Title */}
+                <div className="flex items-center gap-3 mb-6">
+                    <Search className="w-6 h-6 text-red-500" />
+                    <h2 className="text-2xl font-semibold text-white">
+                        Search Channels
+                    </h2>
+                </div>
 
-                <div className="mt-4 max-h-60 overflow-y-auto">
+                {/* Input */}
+                <div className="relative">
+                    <Search className="absolute left-3 top-3 w-5 h-5 text-gray-500" />
+                    <input
+                        autoFocus
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                        placeholder="Type channel name..."
+                        className="w-full bg-[#111] border border-red-800/40 pl-12 p-3 rounded-lg text-white focus:outline-none focus:border-red-500 transition shadow-md"
+                    />
+                </div>
+
+                {/* Results */}
+                <div className="mt-5 max-h-64 overflow-y-auto space-y-1">
                     {results.length > 0 ? (
                         results.map((item, idx) => (
                             <div
@@ -75,16 +90,20 @@ export default function SearchModal({ open, onClose }: Props) {
                                     );
                                     onClose();
                                 }}
-                                className="p-3 cursor-pointer rounded-lg hover:bg-red-900/20 text-gray-200"
+                                className="p-3 cursor-pointer rounded-lg bg-[#181818] hover:bg-red-900/30 text-gray-200 transition"
                             >
                                 {item.channel_title}
                             </div>
                         ))
                     ) : query.length > 0 ? (
-                        <div className="text-gray-500 p-3">
+                        <div className="text-gray-500 text-center p-3">
                             No results found.
                         </div>
-                    ) : null}
+                    ) : (
+                        <div className="text-gray-500 text-center p-3 opacity-70">
+                            Start typing to search...
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
