@@ -65,7 +65,7 @@ export default function Home() {
                     YouTube Statistics
                 </h1>
                 <p className="mt-3 text-lg text-gray-300">
-                    Big Data Analytics Dashboard • Spark • Hadoop • FastAPI •
+                    Big Data Analytics Dashboard • Spark • FastAPI •
                     Next.js
                 </p>
             </header>
