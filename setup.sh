@@ -146,6 +146,26 @@ upload_to_hdfs() {
     
     print_success "Hadoop NameNode is ready"
     
+    # Wait for HDFS to exit safe mode
+    print_info "Waiting for HDFS to exit safe mode..."
+    RETRIES=0
+    MAX_RETRIES=30
+    while [ $RETRIES -lt $MAX_RETRIES ]; do
+        SAFE_MODE=$(docker exec hadoop-master hdfs dfsadmin -safemode get 2>/dev/null | grep -i "safe mode is off" || echo "")
+        if [ -n "$SAFE_MODE" ]; then
+            break
+        fi
+        sleep 2
+        RETRIES=$((RETRIES+1))
+    done
+    
+    if [ $RETRIES -eq $MAX_RETRIES ]; then
+        print_info "Forcing HDFS out of safe mode..."
+        docker exec hadoop-master hdfs dfsadmin -safemode leave || true
+        sleep 2
+    fi
+    print_success "HDFS is ready for writes"
+    
     # Copy file into container
     print_info "Copying dataset into hadoop-master container..."
     docker cp ./data/raw/youtube_trending.csv hadoop-master:/tmp/youtube_trending.csv

@@ -13,7 +13,10 @@ if len(sys.argv) < 2:
 
 CHANNEL = sys.argv[1]
 
-spark = SparkSession.builder.appName(f"Forecast_{CHANNEL}").getOrCreate()
+spark = SparkSession.builder \
+    .appName(f"Forecast_{CHANNEL}") \
+    .config("spark.hadoop.fs.defaultFS", "file:///") \
+    .getOrCreate()
 
 DATA_DIR = "/data/processed/analytics/daily_views"  # where daily views parquet lives
 FORECAST_DIR = f"/data/processed/forecasts/{CHANNEL}"
