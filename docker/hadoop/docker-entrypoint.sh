@@ -20,6 +20,10 @@ chmod 600 /home/hduser/.ssh/authorized_keys
 # Ensure directories exist
 mkdir -p ${HADOOP_NAMENODE_DIR} ${HADOOP_DATANODE_DIR}
 
+# Remove stale lock files
+rm -f ${HADOOP_NAMENODE_DIR}/in_use.lock
+rm -f ${HADOOP_DATANODE_DIR}/in_use.lock
+
 if [ "$HADOOP_ROLE" = "master" ]; then
   # Format namenode on first run
   if [ ! -f ${HADOOP_NAMENODE_DIR}/current/VERSION ]; then

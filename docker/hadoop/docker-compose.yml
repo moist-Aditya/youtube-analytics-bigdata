@@ -11,7 +11,6 @@ services:
       - ../../data/raw:/data/raw
       - ../../backend/processed-data:/data/processed
       - hadoop_namenode:/hadoop_data/hdfs/namenode
-      - hadoop_datanode:/hadoop_data/hdfs/datanode
     ports:
       - "9870:9870" # namenode web UI
       - "9000:9000" # HDFS
@@ -28,7 +27,7 @@ services:
       - ./hadoop_conf:/opt/hadoop/etc/hadoop
       - ../../data/raw:/data/raw
       - ../../backend/processed-data:/data/processed
-      - hadoop_datanode:/hadoop_data/hdfs/datanode
+      - hadoop_datanode_1:/hadoop_data/hdfs/datanode
     networks:
       - hadoop-net
 
@@ -41,7 +40,7 @@ services:
       - ./hadoop_conf:/opt/hadoop/etc/hadoop
       - ../../data/raw:/data/raw
       - ../../backend/processed-data:/data/processed
-      - hadoop_datanode:/hadoop_data/hdfs/datanode
+      - hadoop_datanode_2:/hadoop_data/hdfs/datanode
     networks:
       - hadoop-net
 
@@ -139,4 +138,5 @@ networks:
 
 volumes:
   hadoop_namenode:
-  hadoop_datanode:
+  hadoop_datanode_1:
+  hadoop_datanode_2:
