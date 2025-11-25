@@ -24,12 +24,12 @@ fi
 
 # Stop existing services
 print_step "Stopping existing services"
-docker compose -f docker/hadoop/docker-compose.yml down 2>/dev/null || true
+docker compose -f docker/docker-compose.yml down 2>/dev/null || true
 lsof -ti:3000 2>/dev/null | xargs kill -9 2>/dev/null || true
 
 # Start cluster
 print_step "Starting Hadoop & Spark cluster"
-docker compose -f docker/hadoop/docker-compose.yml up -d --build
+docker compose -f docker/docker-compose.yml up -d --build
 sleep 10
 
 # Upload to HDFS

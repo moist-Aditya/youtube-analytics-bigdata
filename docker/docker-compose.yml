@@ -2,14 +2,14 @@ version: '3.8'
 
 services:
   hadoop-master:
-    build: .
+    build: ./hadoop
     container_name: hadoop-master
     environment:
       - HADOOP_ROLE=master
     volumes:
-      - ./hadoop_conf:/opt/hadoop/etc/hadoop
-      - ../../data/raw:/data/raw
-      - ../../backend/processed-data:/data/processed
+      - ./hadoop/hadoop_conf:/opt/hadoop/etc/hadoop
+      - ../data/raw:/data/raw
+      - ../backend/processed-data:/data/processed
       - hadoop_namenode:/hadoop_data/hdfs/namenode
     ports:
       - "9870:9870" # namenode web UI
@@ -19,34 +19,34 @@ services:
       - hadoop-net
 
   hadoop-worker-1:
-    build: .
+    build: ./hadoop
     container_name: hadoop-worker-1
     environment:
       - HADOOP_ROLE=worker
     volumes:
-      - ./hadoop_conf:/opt/hadoop/etc/hadoop
-      - ../../data/raw:/data/raw
-      - ../../backend/processed-data:/data/processed
+      - ./hadoop/hadoop_conf:/opt/hadoop/etc/hadoop
+      - ../data/raw:/data/raw
+      - ../backend/processed-data:/data/processed
       - hadoop_datanode_1:/hadoop_data/hdfs/datanode
     networks:
       - hadoop-net
 
   hadoop-worker-2:
-    build: .
+    build: ./hadoop
     container_name: hadoop-worker-2
     environment:
       - HADOOP_ROLE=worker
     volumes:
-      - ./hadoop_conf:/opt/hadoop/etc/hadoop
-      - ../../data/raw:/data/raw
-      - ../../backend/processed-data:/data/processed
+      - ./hadoop/hadoop_conf:/opt/hadoop/etc/hadoop
+      - ../data/raw:/data/raw
+      - ../backend/processed-data:/data/processed
       - hadoop_datanode_2:/hadoop_data/hdfs/datanode
     networks:
       - hadoop-net
 
   spark-master:
     build:
-      context: ../spark
+      context: ./spark
       dockerfile: Dockerfile
     image: custom-spark:3.5.0
     container_name: spark-master
@@ -62,10 +62,10 @@ services:
       - "8081:8080" # Spark master web UI remapped
       - "7077:7077"
     volumes:
-      - ../../:/app
-      - ./hadoop_conf:/opt/hadoop/etc/hadoop
-      - ../../backend/processed-data:/data/processed
-      - ../../data/raw:/data/raw
+      - ../:/app
+      - ./hadoop/hadoop_conf:/opt/hadoop/etc/hadoop
+      - ../backend/processed-data:/data/processed
+      - ../data/raw:/data/raw
     depends_on:
       - hadoop-master
     networks:
@@ -85,10 +85,10 @@ services:
       /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker
       spark://spark-master:7077
     volumes:
-      - ../../:/app
-      - ./hadoop_conf:/opt/hadoop/etc/hadoop
-      - ../../backend/processed-data:/data/processed
-      - ../../data/raw:/data/raw
+      - ../:/app
+      - ./hadoop/hadoop_conf:/opt/hadoop/etc/hadoop
+      - ../backend/processed-data:/data/processed
+      - ../data/raw:/data/raw
     networks:
       - hadoop-net
 
@@ -106,21 +106,21 @@ services:
       /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker
       spark://spark-master:7077
     volumes:
-      - ../../:/app
-      - ./hadoop_conf:/opt/hadoop/etc/hadoop
-      - ../../backend/processed-data:/data/processed
-      - ../../data/raw:/data/raw
+      - ../:/app
+      - ./hadoop/hadoop_conf:/opt/hadoop/etc/hadoop
+      - ../backend/processed-data:/data/processed
+      - ../data/raw:/data/raw
     networks:
       - hadoop-net
 
   fastapi:
-    build: ../../backend
+    build: ../backend
     container_name: fastapi
     volumes:
-      - ../../backend/fastapi:/app
-      - ../../backend/processed-data:/data/processed
+      - ../backend/fastapi:/app
+      - ../backend/processed-data:/data/processed
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./hadoop_conf:/opt/hadoop/etc/hadoop
+      - ./hadoop/hadoop_conf:/opt/hadoop/etc/hadoop
     environment:
       - PROCESSED_DIR=/data/processed
       - HADOOP_CONF_DIR=/opt/hadoop/etc/hadoop
