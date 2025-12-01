@@ -63,9 +63,16 @@ docker exec spark-master /opt/spark/bin/spark-submit --master spark://spark-mast
 print_step "Running Spark analytics job"
 docker exec spark-master /opt/spark/bin/spark-submit --master spark://spark-master:7077 /app/backend/spark_jobs/compute_metrics.py
 
+# Copy processed data from HDFS to local mount
+print_step "Copying processed data from HDFS to local filesystem"
+docker exec hadoop-master rm -rf /data/processed/analytics /data/processed/youtube_parquet 2>/dev/null || true
+docker exec hadoop-master hdfs dfs -get /data/processed/youtube_parquet /data/processed/
+docker exec hadoop-master hdfs dfs -get /data/processed/analytics /data/processed/
+docker exec hadoop-master chmod -R 777 /data/processed
+
 # Test API
 print_step "Testing FastAPI"
-sleep 3
+sleep 5
 curl -s http://localhost:8000/top-channels?limit=5 | grep -q "channel_title" || print_error "FastAPI test failed"
 
 # Setup complete
